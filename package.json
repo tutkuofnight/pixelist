@@ -2,14 +2,11 @@
   "name": "nuxtjs-scss-pug-starter",
   "version": "1.0.0",
   "private": true,
-  "engines": {
-    "node": "16.x"
-  },
   "scripts": {
-    "dev": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate"
+    "dev": "nuxt --openssl-legacy-provider",
+    "build": "nuxt build --openssl-legacy-provider",
+    "start": "nuxt start --openssl-legacy-provider",
+    "generate": "nuxt generate --openssl-legacy-provider"
   },
   "dependencies": {
     "core-js": "^3.19.3",
