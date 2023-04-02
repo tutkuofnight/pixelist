@@ -1,5 +1,5 @@
 const state = () => ({
-  text: "Hi 🍃"
+
 })
 
 const getters = {
