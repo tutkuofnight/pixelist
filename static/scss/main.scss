@@ -1,5 +1,4 @@
-@import './colors';
-@import './mixins';
+@use './colors' as c;
 
 * {
   margin: 0;
@@ -30,27 +29,27 @@ $size: 50;
   background: black;
   width: 100%;
   height: 100vh;
-  color: $color;
+  color: c.$color;
 }
 
 .px-btn {
   padding: 5px 15px;
   border-radius: 5px;
-  background: $color;
-  border: 3px solid $bg-color;
-  outline: 2px solid $bg-color;
+  background: c.$color;
+  border: 3px solid c.$bg-color;
+  outline: 2px solid c.$bg-color;
   transition: 150ms all;
   font-weight: 600;
   font-size: 16px;
   cursor: pointer;
-  color: $bg-color;
+  color: c.$bg-color;
   &:hover , &:focus {
-    outline: 2px solid $color;
+    outline: 2px solid c.$color;
   }
   &:disabled {
     cursor: wait;
     &:hover {
-      outline: 2px solid $bg-color;
+      outline: 2px solid c.$bg-color;
     }
   }
 }
