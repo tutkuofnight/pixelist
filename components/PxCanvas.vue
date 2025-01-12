@@ -15,26 +15,33 @@ export default {
     return {
       canvas,
       clicked: false,
+      rightClick: false,
       removeBorder: false,
       bucketCheck: false,
       colorPicker: {
         selected: 0, 
       },
+      scale: 1,
       colors: {
         0: '#74b9ff',
         1: '#00cec9',
         2: '#6c5ce7',
         3: '#d63031',
         4: '#dfe6e9',
-        5: '#000000', 
+        5: '#000000',
+        transparnet: "transparent"
       },
     };
   },
   methods: {
-    changeColor(id, options) {
+    changeColor(event, id, options = {}) {
       if (this.clicked) {
         const str = [...id.split(":")];
-        this.canvas[str[0]][str[1]].color = this.colors[this.colorPicker.selected];
+        if (this.rightClick && event.button == 2) {
+          this.canvas[str[0]][str[1]].color = this.colors["transparent"];
+        } else {
+          this.canvas[str[0]][str[1]].color = this.colors[this.colorPicker.selected];
+        }
       }
     },
     changeColorAll() {
@@ -44,26 +51,41 @@ export default {
         }
       }
     },
-    mousedown(id) {
+    mousedown(e, id) {
       this.clicked = true;
-      this.changeColor(id, { click: true });
+      if (e.button == 2) this.rightClick = true
+      this.changeColor(e, id, { click: true });
     },
     selectedColor(type){
       this.colorPicker.selected = type
     }
   },
+  mounted() {
+    document.addEventListener("contextmenu", e => e.preventDefault())
+    window.addEventListener("wheel", e => {
+      if (this.$refs.canvas.style) {
+        let currentScale = this.$refs.canvas.style.scale
+        if (e.deltaY < 0) {
+          this.scale = ((currentScale * 100) + 10) / 100
+        } else {
+          this.scale = ((currentScale * 100) - 10) / 100
+        }
+      }
+    })
+  }
 };
 </script>
 
 <template lang="pug">
 main
-  .px-canvas(v-for="(line , index) in canvas")
-    .cell.border(v-for="(item , index2) in canvas[index]"
-        @mouseenter="changeColor(item.id)"
-        @mousedown="mousedown(item.id)"
-        @mouseup="clicked = false"
-        :style="{ backgroundColor: item.color }"
-        :class="{'border-transparent': removeBorder}")
+  .canvas-wrapper(ref="canvas" :style="`scale: ${scale}`")
+    .px-canvas(v-for="(line , index) in canvas")
+      .cell.border(v-for="(item , index2) in canvas[index]"
+          @mouseenter="changeColor($event, item.id)"
+          @mousedown="mousedown($event, item.id)"
+          @mouseup="clicked = false; rightClick = false"
+          :style="{ backgroundColor: item.color }"
+          :class="{'border-transparent': removeBorder}")
   .sidebar
     .color-container(v-for="(cls , index) in colors")
       .color-picker(@click="selectedColor(index)" :style="{backgroundColor: colors[index]}" :class='{"active": colorPicker.selected == index}')
@@ -78,6 +100,9 @@ main
 
 
 <style lang="scss" scoped>
+main {
+  overflow: hidden;
+}
 .px-canvas {
   margin: 0 auto;
   width: 1050px;
